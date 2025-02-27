@@ -1,13 +1,14 @@
 import { promises as fs } from "fs";
 import { join } from "path";
 
-class CodeFiles {
+export default class CodeFiles {
   private directory: string;
   private fileMap: Map<string, boolean>;
 
   constructor(directory: string) {
     this.directory = directory;
     this.fileMap = new Map();
+    this.initialize();
   }
 
   private async loadDirectory(dir: string, recursive: boolean): Promise<void> {
