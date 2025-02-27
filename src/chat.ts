@@ -35,17 +35,23 @@ async function chat(message: string): Promise<void> {
   await answer(response);
 }
 
+function is(input: string, compare: string[]): boolean {
+  if (input === "") return false;
+
+  for (const c of compare) {
+    if (input.toLowerCase() === c) return true;
+  }
+
+  return false;
+}
+
 export default async function startChat(): Promise<void> {
   while (true) {
     let userInput = await readline.question(chalk.yellowBright.bold(">>> "));
 
     if (userInput === "") continue;
-    if (userInput.toLowerCase() === "/exit" || userInput.toLowerCase() === "exit") break;
-
-    // test command so i can be lazy
-    if (userInput.toLowerCase() === "/test" || userInput.toLowerCase() === ".") {
-      userInput = "write a hello world function in typescript";
-    }
+    if (is(userInput, ["/exit", "exit"])) break;
+    if (is(userInput, ["/test", "."])) userInput = "write a hello world function in typescript";
 
     await chat(userInput);
   }
