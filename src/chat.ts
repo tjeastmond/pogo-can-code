@@ -1,10 +1,10 @@
 import { MessageContent } from "@langchain/core/messages";
+import PogoAI from "@models";
+import { SIMPLE_CREATE_PROMPT } from "@prompts";
 import chalk from "chalk";
 import { stdin as input, stdout as output } from "node:process";
 import { createInterface } from "node:readline/promises";
 import ora from "ora";
-import PogoAI from "./models";
-import { SIMPLE_CREATE_PROMPT } from "./prompts";
 
 const llm = new PogoAI();
 const readline = createInterface({ input, output });
