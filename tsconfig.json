@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "esModuleInterop": true,
+    "isolatedModules": true,
+    "module": "Preserve",
+    "moduleDetection": "force",
+    "outDir": "dist",
+    "resolveJsonModule": true,
+    "target": "ES2017",
+
+    "paths": {
+      "@src/*": ["./src/*"]
+    }
+  },
+
+  "include": ["**/*.ts", "*.ts"],
+  "exclude": ["node_modules"]
+}
