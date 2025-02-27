@@ -45,7 +45,7 @@ function is(input: string, compare: string[]): boolean {
   return false;
 }
 
-export default async function startChat(): Promise<void> {
+export default async function Pogo(): Promise<void> {
   while (true) {
     let userInput = await readline.question(chalk.yellowBright.bold(">>> "));
 

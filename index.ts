@@ -1,4 +1,6 @@
-import startChat from "@chat";
+import Pogo from "@chat";
 import dotenv from "dotenv";
+
 dotenv.config();
-startChat();
+
+Pogo();
