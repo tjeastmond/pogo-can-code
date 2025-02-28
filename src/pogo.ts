@@ -3,6 +3,7 @@ import { MessageContent } from "@langchain/core/messages";
 import PogoAI from "@models";
 import { SIMPLE_CREATE_PROMPT } from "@prompts";
 import chalk from "chalk";
+import clipboardy from "clipboardy";
 import { stdin as input, stdout as output } from "node:process";
 import { createInterface } from "node:readline/promises";
 import ora from "ora";
@@ -30,6 +31,8 @@ async function chat(message: string): Promise<void> {
   spinner.start();
   const response = await llm.chat(request);
   spinner.stop();
+
+  clipboardy.writeSync(response);
 
   await answer(response);
 }
