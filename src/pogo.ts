@@ -9,6 +9,7 @@ import { createInterface } from "node:readline/promises";
 import ora from "ora";
 
 const llm = new PogoAI();
+
 const spinner = ora({
   color: "blue",
   discardStdin: false,
@@ -65,8 +66,9 @@ export default async function Pogo(): Promise<void> {
     if (is(userInput, ["/test", "."])) userInput = "write a hello world function in typescript";
 
     if (is(userInput, ["/files", "/f"])) {
-      const fileList = files.listFiles();
       console.log("\n", chalk.magenta.bold("Files:"), "\n");
+
+      const fileList = files.listFiles();
       for (const file of fileList) {
         console.log(chalk.dim(" -"), chalk.green(file));
       }
