@@ -5,16 +5,20 @@ import { v4 as uuidv4 } from "uuid";
 const LLM_PROVIDER = process.env.LLM_PROVIDER || "openai";
 
 export default class PogoAI {
-  private model: any;
+  private model!: ChatOpenAI;
   private llm: any;
   private workflow: any;
-  private config: any;
+  private config: { configurable: { thread_id: string } };
 
   constructor() {
     this.config = { configurable: { thread_id: uuidv4() } };
-    this.initModel();
-    this.initWorkflow();
-    this.initLLM();
+    this.init();
+  }
+
+  async init() {
+    await this.initModel();
+    await this.initWorkflow();
+    await this.initLLM();
   }
 
   async initWorkflow() {
