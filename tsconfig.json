@@ -8,6 +8,8 @@
     "outDir": "dist",
     "resolveJsonModule": true,
     "target": "ES2017",
+    "noUnusedLocals": true,
+    "strict": true,
 
     "paths": {
       "@*": ["./src/*"]
