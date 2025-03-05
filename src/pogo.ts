@@ -25,7 +25,7 @@ const spinner = ora({
 });
 
 async function answer(message: MessageContent | string) {
-  console.log(`\n${message}\n`);
+  console.log(`\n${message.toString()}\n`);
 }
 
 function prompt(input: string, prompt: string) {
@@ -94,7 +94,7 @@ export default async function Pogo(): Promise<void> {
   readline.close();
 }
 
-const commandHandlers: Record<string, (args: string) => Promise<void>> = {
+const commandHandlers: Record<string, (input: string) => Promise<void>> = {
   exit: async () => {
     return;
   },
@@ -110,9 +110,9 @@ const commandHandlers: Record<string, (args: string) => Promise<void>> = {
     console.log();
   },
 
-  review: async (args: string) => {
+  review: async (input: string) => {
     console.log("\n", chalk.magenta.bold("Review:"), "\n");
-    const context = await filesContext([args]);
+    const context = await filesContext([input]);
     await chat(prompt(context, prompts.REVIEW));
   },
 
