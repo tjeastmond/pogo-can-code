@@ -89,7 +89,6 @@ Format your review as follows:
 Your review should be detailed but concise, focusing on the most important aspects of the code.
 
 Review the following code:
-
 `;
 
 export default {
