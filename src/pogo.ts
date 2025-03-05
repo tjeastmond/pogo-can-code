@@ -33,6 +33,10 @@ async function answer(message: MessageContent | string) {
   console.log("\n", message, "\n");
 }
 
+function prompt(input: string, prompt: string) {
+  return prompt + input;
+}
+
 async function chat(message: string): Promise<void> {
   spinner.start();
   const response = await llm.chat(message);
@@ -71,10 +75,6 @@ function parseCommand(input: string): ParsedCommand {
   }
 
   return { command: "", request: "" };
-}
-
-function prompt(input: string, prompt: string) {
-  return prompt + input;
 }
 
 export default async function Pogo(): Promise<void> {
