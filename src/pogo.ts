@@ -9,7 +9,7 @@ import ora from "ora";
 
 type ParsedCommand = {
   command: string;
-  request: string;
+  message: string;
 };
 
 const COMMANDS = ["/exit", "/files", "/review", "/test"];
@@ -30,7 +30,7 @@ const spinner = ora({
 // }
 
 async function answer(message: MessageContent | string) {
-  console.log("\n", message, "\n");
+  console.log(`\n${message}\n`);
 }
 
 function prompt(input: string, prompt: string) {
@@ -41,8 +41,7 @@ async function chat(message: string): Promise<void> {
   spinner.start();
   const response = await llm.chat(message);
   spinner.stop();
-  // clipboardy.writeSync(response);
-  await answer(response);
+  await answer(response.trim());
 }
 
 async function filesContext(filePaths: string[]) {
@@ -57,24 +56,19 @@ async function filesContext(filePaths: string[]) {
   return context;
 }
 
-function is(input: string, compare: string[]): boolean {
-  if (input === "") return false;
-  for (const c of compare) {
-    if (input.toLowerCase() === c) return true;
+function parseInput(input: string): ParsedCommand {
+  if (isCommand(input)) {
+    const firstSpaceIndex = input.indexOf(" ");
+    const command = firstSpaceIndex > 0 ? input.substring(1, firstSpaceIndex) : input.substring(1);
+    const message = firstSpaceIndex > 0 ? input.substring(firstSpaceIndex + 1).trim() : "";
+    return { command, message };
   }
-  return false;
+
+  return { command: "", message: "" };
 }
 
 function isCommand(input: string): boolean {
   return input.startsWith("/");
-}
-
-function parseCommand(input: string): ParsedCommand {
-  if (input.substring(0, 7) === "/review") {
-    return { command: "review", request: input.substring(7).trim() };
-  }
-
-  return { command: "", request: "" };
 }
 
 export default async function Pogo(): Promise<void> {
@@ -90,37 +84,13 @@ export default async function Pogo(): Promise<void> {
 
   while (true) {
     let userInput = await readline.question(chalk.yellowBright.bold(">>> "));
-
     if (userInput === "") continue;
-    if (is(userInput, ["/exit", "/e"])) break;
-    if (is(userInput, ["/test", "."])) userInput = "write a hello world function in typescript";
 
-    if (is(userInput, ["/files", "/f"])) {
-      console.log("\n", chalk.magenta.bold("Files:"), "\n");
-
-      const fileList = files.listFiles();
-      for (const file of fileList) {
-        console.log(chalk.dim(" -"), chalk.green(file));
-      }
-
-      console.log();
+    const { command, message } = parseInput(userInput);
+    if (command && commandHandlers[command]) {
+      await commandHandlers[command](message);
+      if (command === "exit") break;
       continue;
-    }
-
-    if (isCommand(userInput)) {
-      const command = parseCommand(userInput);
-
-      if (command.command === "") {
-        console.log(chalk.red("Invalid Command"));
-        continue;
-      }
-
-      if (command.command === "review") {
-        console.log("\n", chalk.magenta.bold("Review:"), "\n");
-        const context = await filesContext([command.request]);
-        await chat(prompt(context, prompts.REVIEW));
-        continue;
-      }
     }
 
     await chat(prompt(userInput, prompts.SIMPLE_CREATE));
@@ -128,3 +98,30 @@ export default async function Pogo(): Promise<void> {
 
   readline.close();
 }
+
+const commandHandlers: Record<string, (args: string) => Promise<void>> = {
+  exit: async () => {
+    return;
+  },
+
+  files: async () => {
+    console.log("\n", chalk.magenta.bold("Files:"), "\n");
+
+    const fileList = files.listFiles();
+    for (const file of fileList) {
+      console.log(chalk.dim(" -"), chalk.green(file));
+    }
+
+    console.log();
+  },
+
+  review: async (args: string) => {
+    console.log("\n", chalk.magenta.bold("Review:"), "\n");
+    const context = await filesContext([args]);
+    await chat(prompt(context, prompts.REVIEW));
+  },
+
+  test: async () => {
+    await chat(prompt("write a hello world function in typescript", prompts.SIMPLE_CREATE));
+  },
+};
