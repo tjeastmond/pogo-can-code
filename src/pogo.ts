@@ -24,11 +24,6 @@ const spinner = ora({
   text: chalk.dim("Pogo is Thinking..."),
 });
 
-// function clearCLI() {
-//   cursorTo(process.stdout, 0, 0);
-//   clearScreenDown(process.stdout);
-// }
-
 async function answer(message: MessageContent | string) {
   console.log(`\n${message}\n`);
 }
