@@ -8,7 +8,9 @@ export default class PogoAI {
   private model!: ChatOpenAI;
   private llm: any;
   private workflow: any;
+  private memory!: MemorySaver;
   private config: { configurable: { thread_id: string } };
+  private lastMessage: string | null = null;
 
   constructor() {
     this.config = { configurable: { thread_id: uuidv4() } };
@@ -34,8 +36,8 @@ export default class PogoAI {
   }
 
   async initLLM(): Promise<void> {
-    const memory = new MemorySaver();
-    this.llm = this.workflow.compile({ checkpointer: memory });
+    this.memory = new MemorySaver();
+    this.llm = this.workflow.compile({ checkpointer: this.memory });
   }
 
   async initModel(): Promise<void> {
@@ -54,10 +56,14 @@ export default class PogoAI {
     }
   }
 
+  async getLastMessage(): Promise<string | null> {
+    return this.lastMessage;
+  }
+
   async chat(content: string) {
     const messages = [{ role: "user", content }];
     const response = await this.llm.invoke({ messages }, this.config);
-    const lastMessage = response.messages[response.messages.length - 1];
-    return lastMessage.content;
+    this.lastMessage = response.messages[response.messages.length - 1]?.content ?? null;
+    return this.lastMessage;
   }
 }
