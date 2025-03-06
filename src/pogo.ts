@@ -25,7 +25,8 @@ const spinner = ora({
 });
 
 async function answer(message: MessageContent | string) {
-  console.log(`\n${message.toString()}\n`);
+  const msg = message.toString();
+  console.log(`\n${msg}\n`);
 }
 
 function prompt(input: string, prompt: string) {
@@ -36,7 +37,7 @@ async function chat(message: string): Promise<void> {
   spinner.start();
   const response = await llm.chat(message);
   spinner.stop();
-  await answer(response.trim());
+  await answer(response!.trim());
 }
 
 async function filesContext(filePaths: string[]) {
