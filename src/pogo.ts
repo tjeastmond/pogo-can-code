@@ -106,7 +106,10 @@ const commandHandlers: Record<string, (input: string) => Promise<void>> = {
     if (lastMessage) {
       await clipboardy.write(lastMessage!);
       answer(chalk.green("Copied to clipboard"));
+      return;
     }
+
+    answer(chalk.red("Nothing to copy"));
   },
 
   exit: async () => {
