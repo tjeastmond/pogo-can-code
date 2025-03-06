@@ -1,8 +1,10 @@
 import CodeFiles from "@codeFiles";
+import config from "@config";
 import { MessageContent } from "@langchain/core/messages";
 import PogoAI from "@llms";
 import prompts from "@prompts";
 import chalk from "chalk";
+import clipboardy from "clipboardy";
 import { stdin as input, stdout as output } from "node:process";
 import { createInterface } from "node:readline/promises";
 import ora from "ora";
@@ -12,8 +14,6 @@ type ParsedCommand = {
   message: string;
 };
 
-const COMMANDS = ["/exit", "/files", "/review", "/test"];
-
 const llm = new PogoAI();
 const files = new CodeFiles(".");
 
@@ -21,7 +21,7 @@ const spinner = ora({
   color: "blue",
   discardStdin: false,
   indent: 1,
-  text: chalk.dim("Pogo is Thinking..."),
+  text: chalk.dim(config.pogoIsThinking),
 });
 
 async function answer(message: MessageContent | string) {
@@ -57,6 +57,11 @@ function parseInput(input: string): ParsedCommand {
     const firstSpaceIndex = input.indexOf(" ");
     const command = firstSpaceIndex > 0 ? input.substring(1, firstSpaceIndex) : input.substring(1);
     const message = firstSpaceIndex > 0 ? input.substring(firstSpaceIndex + 1).trim() : "";
+
+    if (!config.commands.includes(command)) {
+      return { command: "invalid", message };
+    }
+
     return { command, message };
   }
 
@@ -72,7 +77,7 @@ export default async function Pogo(): Promise<void> {
     input,
     output,
     completer: (line: string): [string[], string] => {
-      const completions = COMMANDS;
+      const completions = config.slashCommands;
       const hits = completions.filter((c) => c.startsWith(line));
       return [hits.length ? hits : completions, line];
     },
@@ -96,12 +101,20 @@ export default async function Pogo(): Promise<void> {
 }
 
 const commandHandlers: Record<string, (input: string) => Promise<void>> = {
+  copy: async () => {
+    const lastMessage = await llm.getLastMessage();
+    if (lastMessage) {
+      await clipboardy.write(lastMessage!);
+      answer(chalk.green("Copied to clipboard"));
+    }
+  },
+
   exit: async () => {
     return;
   },
 
   files: async () => {
-    console.log("\n", chalk.magenta.bold("Files:"), "\n");
+    console.log("\n" + chalk.magenta.bold("Files:") + "\n");
 
     const fileList = files.listFiles();
     for (const file of fileList) {
@@ -111,8 +124,12 @@ const commandHandlers: Record<string, (input: string) => Promise<void>> = {
     console.log();
   },
 
+  invalid: async () => {
+    console.log("\n" + chalk.red.bold(config.invalidCommand) + "\n");
+  },
+
   review: async (input: string) => {
-    console.log("\n", chalk.magenta.bold("Review:"), "\n");
+    console.log("\n" + chalk.magenta.bold("Review:") + "\n");
     const context = await filesContext([input]);
     await chat(prompt(context, prompts.REVIEW));
   },

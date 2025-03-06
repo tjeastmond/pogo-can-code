@@ -1,3 +1,4 @@
+import config from "@config";
 import { END, MemorySaver, MessagesAnnotation, START, StateGraph } from "@langchain/langgraph";
 import { ChatOpenAI } from "@langchain/openai";
 import { v4 as uuidv4 } from "uuid";
@@ -44,7 +45,7 @@ export default class PogoAI {
     switch (LLM_PROVIDER.toLowerCase()) {
       case "openai":
         this.model = new ChatOpenAI({
-          modelName: "gpt-4o-mini",
+          modelName: config.defaultModels.openai,
           openAIApiKey: process.env.OPENAI_API_KEY,
           temperature: 0,
           streaming: false,
