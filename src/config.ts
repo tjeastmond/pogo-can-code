@@ -1,4 +1,3 @@
-// cli commands
 export const slashCommands = ["/copy", "/exit", "/files", "/review", "/test"];
 export const commands = slashCommands.map((c) => c.slice(1));
 
