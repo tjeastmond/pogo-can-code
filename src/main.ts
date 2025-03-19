@@ -1,10 +1,6 @@
 import Pogo from "@pogo";
-import dotenv from "dotenv";
+import "dotenv/config";
 
-dotenv.config();
-
-async function main() {
-  await Pogo();
-}
+const main = async () => await Pogo();
 
 main();
