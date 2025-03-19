@@ -21,4 +21,6 @@ build/
 logs
 *.log
 
+# local tests
+testfiles/*
 src/utils/highlight.ts
