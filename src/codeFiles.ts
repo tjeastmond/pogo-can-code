@@ -1,7 +1,8 @@
+import { ignoreFilePatterns } from "@config";
 import { promises as fs } from "fs";
 import { join } from "path";
 
-const IGNORE_PATTERNS = ["^\\.git", "^\\.", "^node_modules"];
+const IGNORE_PATTERNS = ignoreFilePatterns;
 
 export default class CodeFiles {
   private directory: string;

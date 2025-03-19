@@ -14,10 +14,13 @@ export const defaultModels = {
   openai: "gpt-4o-mini",
 };
 
+export const ignoreFilePatterns = ["^\\.git", "^\\.", "^node_modules"];
+
 export default {
   commands,
   defaultLLM,
   defaultModels,
+  ignoreFilePatterns,
   invalidCommand,
   pogoIsThinking,
   prompts,
