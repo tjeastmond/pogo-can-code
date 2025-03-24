@@ -3,7 +3,7 @@ import { END, MemorySaver, MessagesAnnotation, START, StateGraph } from "@langch
 import { ChatOpenAI } from "@langchain/openai";
 import { v4 as uuidv4 } from "uuid";
 
-const LLM_PROVIDER = process.env.LLM_PROVIDER || "openai";
+const LLM_PROVIDER = process.env.LLM_PROVIDER || config.defaultLLM;
 
 export default class PogoAI {
   private model!: ChatOpenAI;
@@ -47,8 +47,16 @@ export default class PogoAI {
         this.model = new ChatOpenAI({
           modelName: config.defaultModels.openai,
           openAIApiKey: process.env.OPENAI_API_KEY,
-          temperature: 0,
           streaming: false,
+        });
+        break;
+
+      case "openaiturbo":
+        this.model = new ChatOpenAI({
+          modelName: config.defaultModels.openaiturbo,
+          openAIApiKey: process.env.OPENAI_API_KEY,
+          streaming: false,
+          temperature: 0,
         });
         break;
 
