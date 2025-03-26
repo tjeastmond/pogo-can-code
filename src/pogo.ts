@@ -1,28 +1,18 @@
-import CodeFiles from "@codeFiles";
-import config from "@config";
+import CodeFiles from "@app/codeFiles";
+import config from "@app/config";
+import PogoAI from "@app/llms";
+import parseInput from "@app/parseInput";
+import prompts from "@app/prompts";
 import { MessageContent } from "@langchain/core/messages";
-import PogoAI from "@llms";
-import prompts from "@prompts";
 import chalk from "chalk";
 import clipboardy from "clipboardy";
 import { stdin as input, stdout as output } from "node:process";
 import { createInterface } from "node:readline/promises";
 import ora from "ora";
 
-type ParsedCommand = {
-  command: string;
-  message: string;
-};
-
 const llm = new PogoAI();
-const files = new CodeFiles(".");
-
-const spinner = ora({
-  color: "blue",
-  discardStdin: false,
-  indent: 1,
-  text: chalk.dim(config.pogoIsThinking),
-});
+const files = new CodeFiles(config.cwd);
+const spinner = ora(config.spinnerOptions);
 
 async function answer(message: MessageContent | string) {
   const msg = message.toString();
@@ -52,26 +42,6 @@ async function filesContext(filePaths: string[]) {
   return context;
 }
 
-function parseInput(input: string): ParsedCommand {
-  if (isCommand(input)) {
-    const firstSpaceIndex = input.indexOf(" ");
-    const command = firstSpaceIndex > 0 ? input.substring(1, firstSpaceIndex) : input.substring(1);
-    const message = firstSpaceIndex > 0 ? input.substring(firstSpaceIndex + 1).trim() : "";
-
-    if (!config.commands.includes(command)) {
-      return { command: "invalid", message };
-    }
-
-    return { command, message };
-  }
-
-  return { command: "", message: "" };
-}
-
-function isCommand(input: string): boolean {
-  return input.startsWith("/");
-}
-
 export default async function Pogo(): Promise<void> {
   const readline = createInterface({
     input,
@@ -87,9 +57,9 @@ export default async function Pogo(): Promise<void> {
     let userInput = await readline.question(chalk.yellowBright.bold(">>> "));
     if (userInput === "") continue;
 
-    const { command, message } = parseInput(userInput);
+    const { command, message, filePaths } = parseInput(userInput);
     if (command && commandHandlers[command]) {
-      await commandHandlers[command](message);
+      await commandHandlers[command](filePaths, message);
       if (command === "exit") break;
       continue;
     }
@@ -100,7 +70,7 @@ export default async function Pogo(): Promise<void> {
   readline.close();
 }
 
-const commandHandlers: Record<string, (input: string) => Promise<void>> = {
+const commandHandlers: CommandHandlers = {
   copy: async () => {
     const lastMessage = await llm.getLastMessage();
     if (lastMessage) {
@@ -110,6 +80,11 @@ const commandHandlers: Record<string, (input: string) => Promise<void>> = {
     }
 
     answer(chalk.red("Nothing to copy"));
+  },
+
+  add: async (filePaths) => {
+    const context = await filesContext(filePaths);
+    console.log(context);
   },
 
   exit: async () => {
@@ -131,9 +106,9 @@ const commandHandlers: Record<string, (input: string) => Promise<void>> = {
     console.log("\n" + chalk.red.bold(config.invalidCommand) + "\n");
   },
 
-  review: async (input: string) => {
+  review: async (filePaths) => {
     console.log("\n" + chalk.magenta.bold("Review:") + "\n");
-    const context = await filesContext([input]);
+    const context = await filesContext(filePaths);
     await chat(prompt(context, prompts.REVIEW));
   },
 
