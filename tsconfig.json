@@ -1,21 +1,23 @@
 {
   "compilerOptions": {
-    "allowJs": true,
-    "esModuleInterop": true,
-    "isolatedModules": true,
-    "module": "Preserve",
-    "moduleDetection": "force",
-    "outDir": "dist",
-    "resolveJsonModule": true,
-    "target": "ES2017",
-    "noUnusedLocals": true,
     "strict": true,
+    "allowJs": true,
+    "outDir": "dist",
+    "noUnusedLocals": true,
 
+    "target": "ES2020",
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+
+    "baseUrl": ".",
     "paths": {
-      "@*": ["./src/*"]
+      "@app/*": ["./src/*"]
     }
   },
 
-  "include": ["**/*.ts", "*.ts"],
+  "include": ["**/*.ts", "*.ts", "**/*.d.ts", "*.d.ts"],
   "exclude": ["node_modules"]
 }

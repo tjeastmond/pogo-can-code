@@ -1,4 +1,4 @@
-import { ignoreFilePatterns } from "@config";
+import { ignoreFilePatterns } from "@app/config";
 import { promises as fs } from "fs";
 import { join } from "path";
 

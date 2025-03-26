@@ -1,4 +1,4 @@
-import config from "@config";
+import config from "@app/config";
 import { END, MemorySaver, MessagesAnnotation, START, StateGraph } from "@langchain/langgraph";
 import { ChatOpenAI } from "@langchain/openai";
 import { v4 as uuidv4 } from "uuid";
