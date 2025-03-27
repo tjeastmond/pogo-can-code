@@ -1,10 +1,10 @@
 import { ignoreFilePatterns } from "@app/config";
-import { promises as fs } from "fs";
 import { join } from "path";
+import { promises as fs } from "fs";
 
 const IGNORE_PATTERNS = ignoreFilePatterns;
 
-export default class CodeFiles {
+export default class Files {
   private directory: string;
   private fileMap: Map<string, boolean>;
   private ignorePatterns: RegExp[];
@@ -50,6 +50,10 @@ export default class CodeFiles {
   async isBinary(filePath: string): Promise<boolean> {
     const content = await fs.readFile(filePath);
     return content.includes(0);
+  }
+
+  filesMap(): Map<string, boolean> {
+    return this.fileMap;
   }
 
   listFiles(): string[] {

@@ -1,5 +1,4 @@
-import CodeFiles from "@app/codeFiles";
-import config from "@app/config";
+import Files from "@app/files";
 import PogoAI from "@app/llms";
 import parseInput from "@app/parseInput";
 import prompts from "@app/prompts";
@@ -9,9 +8,10 @@ import clipboardy from "clipboardy";
 import { stdin as input, stdout as output } from "node:process";
 import { createInterface } from "node:readline/promises";
 import ora from "ora";
+import config from "@app/config";
 
 const llm = new PogoAI();
-const files = new CodeFiles(config.cwd);
+const files = new Files(config.cwd);
 const spinner = ora(config.spinnerOptions);
 
 async function answer(message: MessageContent | string) {
