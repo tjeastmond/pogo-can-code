@@ -1,3 +1,4 @@
+import config from "@app/config";
 import Files from "@app/files";
 import PogoAI from "@app/llms";
 import parseInput from "@app/parseInput";
@@ -8,7 +9,6 @@ import clipboardy from "clipboardy";
 import { stdin as input, stdout as output } from "node:process";
 import { createInterface } from "node:readline/promises";
 import ora from "ora";
-import config from "@app/config";
 
 const llm = new PogoAI();
 const files = new Files(config.cwd);
@@ -19,6 +19,7 @@ async function answer(message: MessageContent | string) {
   console.log(`\n${msg}\n`);
 }
 
+// this seems trivial, but i want a hook to modify the prompt if needed later
 function prompt(input: string, prompt: string) {
   return prompt + input;
 }
@@ -82,9 +83,9 @@ const commandHandlers: CommandHandlers = {
     answer(chalk.red("Nothing to copy"));
   },
 
-  add: async (filePaths) => {
+  edit: async (filePaths, message) => {
     const context = await filesContext(filePaths);
-    console.log(context);
+    await chat(prompt(context + message, prompts.EDIT));
   },
 
   exit: async () => {
