@@ -2,7 +2,7 @@ import chalk from "chalk";
 import { Options } from "ora";
 
 export const cwd = ".";
-export const slashCommands = ["/add", "/copy", "/exit", "/files", "/review", "/test"];
+export const slashCommands = ["/copy", "/edit", "/exit", "/files", "/review", "/test"];
 export const commands = slashCommands.map((c) => c.slice(1));
 export const ignoreFilePatterns = ["^\\.git", "^\\.", "^node_modules"];
 export const pogoIsThinking = "Pogo is thinking...";
