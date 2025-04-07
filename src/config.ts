@@ -7,6 +7,7 @@ export const commands = slashCommands.map((c) => c.slice(1));
 export const ignoreFilePatterns = ["^\\.git", "^\\.", "^node_modules"];
 export const pogoIsThinking = "Pogo is thinking...";
 export const invalidCommand = "Invalid command";
+export const missingRequest = "You must supply a request";
 
 export const defaultLLM = "openaiturbo";
 export const defaultModels = {
@@ -18,7 +19,7 @@ export const defaultModels = {
 export const prompts = {
   SIMPLE_CREATE: "simple_create",
   REVIEW: "review",
-  EDIT: "edit",
+  EDIT: "edit2",
 };
 
 export const spinnerOptions: Options = {
@@ -35,6 +36,7 @@ export default {
   defaultModels,
   ignoreFilePatterns,
   invalidCommand,
+  missingRequest,
   pogoIsThinking,
   prompts,
   slashCommands,
