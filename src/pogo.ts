@@ -84,6 +84,11 @@ const commandHandlers: CommandHandlers = {
   },
 
   edit: async (filePaths, message) => {
+    if (!message) {
+      console.log("\n" + chalk.red.bold(config.missingRequest) + "\n");
+      return;
+    }
+
     const context = await filesContext(filePaths);
     await chat(prompt(context + message, prompts.EDIT));
   },
@@ -94,7 +99,6 @@ const commandHandlers: CommandHandlers = {
 
   files: async () => {
     console.log("\n" + chalk.magenta.bold("Files:") + "\n");
-
     const fileList = files.listFiles();
     for (const file of fileList) {
       console.log(chalk.dim(" -"), chalk.green(file));
