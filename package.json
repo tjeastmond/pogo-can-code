@@ -4,7 +4,7 @@
   "description": "AI Code Generation CLI Tool",
   "author": "TJ Eastmond <tj.eastmond@gmail.com>",
   "license": "MIT",
-  "main": "src/main.ts",
+  "main": "src/index.ts",
   "type": "module",
   "keywords": [
     "pogo",
@@ -50,7 +50,7 @@
     ]
   },
   "scripts": {
-    "start": "tsx src/main.ts",
+    "start": "tsx src/index.ts",
     "prepare": "simple-git-hooks",
     "type-check": "tsc --noEmit",
     "test": "jest"
